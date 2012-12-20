@@ -10,6 +10,7 @@
 #include "GameAsset.h"
 #include "Md2Asset.h"
 #include "TriangularPyramidAsset.h"
+#include "CubeAsset.h"
 #include "BallisticInterpolator.h"
 #include "Camera.h"
 
@@ -55,6 +56,8 @@ void display() {
   }
 
   for(auto it : assets) {
+	//  glColorMask(1.0f,0.0f,0.0f,1.0f); // CHANGE COLOR OF BOX! IM A GENIUS!
+	  //glStencilMask(0xf0);  //not sure wtf this does.
     it->draw();
   }
   
@@ -93,8 +96,30 @@ int main(int argc, char ** argv) {
 	  return 1;
 	}
 
-	shared_ptr<GameAsset> p = shared_ptr<GameAsset> (new TriangularPyramidAsset(0, 0, 3));
-	assets.push_back(p);
+
+
+
+/*
+for(int yay=0; yay<10; yay++){
+	for(int temp=0; temp<10; temp++){
+		shared_ptr<GameAsset> a = shared_ptr<GameAsset> (new CubeAsset(yay*2, temp*2,  20));
+		assets.push_back(a); //add cube
+	}
+}  // loops to make platform
+*/
+
+
+shared_ptr<GameAsset> z = shared_ptr<GameAsset> (new TriangularPyramidAsset(0,0,5));
+assets.push_back(z); //code for triangle
+
+shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(-10,0,10));
+assets.push_back(cubeA); //code for cubeA
+
+shared_ptr<GameAsset> cubeB = shared_ptr<GameAsset> (new CubeAsset(10,0,10));
+assets.push_back(cubeB); //code for cubeA
+
+
+
 
 	// Call the function "display" every delay milliseconds
 	SDL_AddTimer(delay, display, NULL);
@@ -116,16 +141,22 @@ int main(int argc, char ** argv) {
 			  Matrix4 camera = Camera::getInstance().getCameraM();
 			  switch(event.key.keysym.sym){
 			  case SDLK_LEFT:
-			    Camera::getInstance().setCamera((camera * Matrix4::rotationY(5.0/180.0)));
-			    break;
+			    //Camera::getInstance().setCamera((camera * Matrix4::rotationY(5.0/180.0)));
+				Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(1.0, 0.0, 0.0)) );
+				//CubeAsset::move(assets.back(), 10);
+				 break;
 			  case SDLK_RIGHT:
-			    Camera::getInstance().setCamera(camera * Matrix4::rotationY(-5.0/180.0) );
+
+				  //TODO try and get the camera to rotate and move at same time!
+
+				  Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(-1.0, 0.0, 0.0)) );
+			     //Camera::getInstance().setCamera((camera) * Matrix4::rotationY(-5.0/180.0) );
 			    break;
 			  case SDLK_UP:
-			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 0.0, -1.0)) );
+			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, -1.0, 0.0)) );
 			    break;
 			  case SDLK_DOWN:
-			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 0.0, 1.0)) );
+			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 1.0, 0.0)) );
 			    break;
 			  default:
 			    break;

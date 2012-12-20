@@ -1,15 +1,14 @@
 #include "TriangularPyramidAsset.h"
 
 TriangularPyramidAsset::TriangularPyramidAsset() 
-  : GameAsset(
-	      string("shaders/hello-gl.v.glsl")
-	      , string("shaders/hello-gl.f.glsl")
-	      )
 {
   TriangularPyramidAsset(0, 0, 0);
 }
 
-TriangularPyramidAsset::TriangularPyramidAsset(float x, float y, float z) {
+TriangularPyramidAsset::TriangularPyramidAsset(float x, float y, float z) :
+						GameAsset(string("shaders/hello-gl.v.glsl"),
+								string("shaders/red.f.glsl"))
+{
   this->li = nullptr;
   this->pos = shared_ptr<Point3>(new Point3(x, y, z));
   // A default "unit" triangular pyramid

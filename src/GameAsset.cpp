@@ -185,3 +185,7 @@ int GameAsset::make_resources(void)
 
     return 1;
 }
+
+bool collision (GameAsset &a){
+	return true;
+}
