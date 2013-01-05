@@ -9,8 +9,12 @@
 
 #include "GameAsset.h"
 #include "Md2Asset.h"
+
+
 #include "TriangularPyramidAsset.h"
 #include "CubeAsset.h"
+#include "Gun.h"
+
 #include "BallisticInterpolator.h"
 #include "Camera.h"
 
@@ -20,6 +24,7 @@ using namespace std;
 
 string filename = "data/ogre.md2";
 vector<shared_ptr<GameAsset> > assets;
+vector<shared_ptr<GameAsset> > player;
 
 /*
  * SDL timers run in separate threads.  In the timer thread
@@ -46,6 +51,9 @@ void display() {
   for(auto it : assets) {
     it->update();
   }
+  for(auto plz : player) {
+      plz->update();
+    }
 
   for(auto i : assets) {
     for(auto j : assets) {
@@ -56,11 +64,16 @@ void display() {
   }
 
   for(auto it : assets) {
-	//  glColorMask(1.0f,0.0f,0.0f,1.0f); // CHANGE COLOR OF BOX! IM A GENIUS!
+	//  glColorMask(1.0f,0.0f,0.0f,1.0f); // CHANGE COLOR OF BOX!
 	  //glStencilMask(0xf0);  //not sure wtf this does.
     it->draw();
   }
+  for(auto pl : player){
+	pl ->draw();
+	//pl->update();
+  }
   
+
   // Don't forget to swap the buffers
   SDL_GL_SwapBuffers();
 }
@@ -108,18 +121,26 @@ for(int yay=0; yay<10; yay++){
 }  // loops to make platform
 */
 
-
+/*
 shared_ptr<GameAsset> z = shared_ptr<GameAsset> (new TriangularPyramidAsset(0,0,5));
 assets.push_back(z); //code for triangle
+*/
+int cubeX = -10;
+int cubeY =   0;
+int cubeZ =  50;
 
-shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(-10,0,10));
+
+shared_ptr<GameAsset> player1 = shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+player.push_back(player1); //code for cubeA
+
+shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(10,0,50));
 assets.push_back(cubeA); //code for cubeA
 
-shared_ptr<GameAsset> cubeB = shared_ptr<GameAsset> (new CubeAsset(10,0,10));
-assets.push_back(cubeB); //code for cubeA
+shared_ptr<GameAsset> gun = shared_ptr<GameAsset> (new Gun(-7,0,47));
+assets.push_back(gun); //code for cubeA
 
 
-
+int camMode = 0;
 
 	// Call the function "display" every delay milliseconds
 	SDL_AddTimer(delay, display, NULL);
@@ -136,26 +157,57 @@ assets.push_back(cubeB); //code for cubeA
 				break;
 			case SDL_KEYUP:
 			  Camera::getInstance().setCamera(Matrix4::identity());
+
 			  break;
 			case SDL_KEYDOWN:
 			  Matrix4 camera = Camera::getInstance().getCameraM();
+// grrrr
 			  switch(event.key.keysym.sym){
+			  case SDLK_c:
+				  if(camMode==0){
+					  camMode=1;
+				  } else {
+					  camMode=0;
+				  }
+				  break;
 			  case SDLK_LEFT:
+				  if(camMode==0){
+				  cubeX -= 10;
+				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+				  }
+				  if(camMode==1){
 			    //Camera::getInstance().setCamera((camera * Matrix4::rotationY(5.0/180.0)));
 				Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(1.0, 0.0, 0.0)) );
-				//CubeAsset::move(assets.back(), 10);
+				  }
 				 break;
 			  case SDLK_RIGHT:
 
-				  //TODO try and get the camera to rotate and move at same time!
+				  if(camMode==0){
+				  cubeX += 10;
+				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+				  }
+				  /*
+				  for(auto pl2 : player){
+				  	pl2 ->draw();
+				  	pl2->update();
+				    }
+				    */
 
+				  //TODO try and get the camera to rotate and move at same time!
+				  if(camMode==1){
 				  Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(-1.0, 0.0, 0.0)) );
-			     //Camera::getInstance().setCamera((camera) * Matrix4::rotationY(-5.0/180.0) );
+				  }
 			    break;
 			  case SDLK_UP:
+
+				  //player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+
+
 			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, -1.0, 0.0)) );
+
 			    break;
 			  case SDLK_DOWN:
+				 // player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,0,50));
 			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 1.0, 0.0)) );
 			    break;
 			  default:

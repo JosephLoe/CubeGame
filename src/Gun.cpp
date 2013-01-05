@@ -1,15 +1,13 @@
-#include "CubeAsset.h"
+#include "Gun.h"
 
-CubeAsset::CubeAsset()
-  : GameAsset(
-	      string("shaders/hello-gl.v.glsl")
-	      , string("shaders/hello-gl.f.glsl")
-	      )
+Gun::Gun()
 {
-  CubeAsset(0, 0, 0);
+  Gun(0, 0, 0);
 }
 
-CubeAsset::CubeAsset(float x, float y, float z) {
+Gun::Gun(float x, float y, float z)   : GameAsset(
+	      string("shaders/hello-gl.v.glsl")
+	      , string("shaders/red.f.glsl")){
   this->li = nullptr;
   this->pos = shared_ptr<Point3>(new Point3(x, y, z));
   // A default "unit" triangular pyramid
@@ -17,14 +15,14 @@ CubeAsset::CubeAsset(float x, float y, float z) {
   num_triangles = 12;
   g_vertex_buffer_data = new GLfloat[num_vertices * 3]{
 //	   X,  Y,  Z,
-	  -3, -3, -3, //0
-	   3, -3, -3, //1
-	   3,  3, -3, //2
-	  -3,  3, -3, //3
-	  -3, -3,  3, //4
-	   3, -3,  3, //5
-	   3,  3,  3, //6
-	  -3,  3,  3  //7
+	  -2, -1, -1, //0
+	   2, -1, -1, //1
+	   2,  1, -1, //2
+	  -2,  1, -1, //3
+	  -2, -1,  1, //4
+	   2, -1,  1, //5
+	   2,  1,  1, //6
+	  -2,  1,  1  //7
 
   }; // three points per vertex
   g_element_buffer_data = new GLushort[num_triangles * 3]{
@@ -52,25 +50,25 @@ CubeAsset::CubeAsset(float x, float y, float z) {
   make_resources();
 }
 
-CubeAsset::~CubeAsset() {
+Gun::~Gun() {
   // TODO: do something nice here.
 }
 
-void CubeAsset::update() {
+void Gun::update() {
 	//GameAsset::draw();
 }
 
-void CubeAsset::setInterpolator(shared_ptr<IInterpolator> li) {
+void Gun::setInterpolator(shared_ptr<IInterpolator> li) {
   this->li.swap(li);
 }
 
-void CubeAsset::draw() {
+void Gun::draw() {
   GameAsset::draw();
 }
 
 /*
-CubeAsset::move(<shared_ptr> a, int b){
-CubeAsset(0.0,1.0,0.0)
+Gun::move(<shared_ptr> a, int b){
+Gun(0.0,1.0,0.0)
 
 }
 */
