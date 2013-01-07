@@ -26,6 +26,22 @@ using namespace std;
 string filename = "data/ogre.md2";
 vector<shared_ptr<GameAsset> > assets;
 vector<shared_ptr<GameAsset> > player;
+int cubeSize = 3;
+
+int cubeX = -10;
+int cubeY =   0;
+int cubeZ =  50;
+
+int tempX = 	0;
+int tempY =   	0;
+
+int theWidth = 640;
+int theHeight = 480;
+
+int count =0;
+
+string green = "shaders/green.f.glsl";
+string red = "shaders/red.f.glsl";
 
 /*
  * SDL timers run in separate threads.  In the timer thread
@@ -47,6 +63,7 @@ void display() {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
   // This O(n + n^2 + n) sequence of loops is written for clarity,
   // not efficiency
   for(auto it : assets) {
@@ -60,6 +77,21 @@ void display() {
     for(auto j : player) {
       if((i != j) && i->collidesWith(*j)) {
 	cout << "We have a collision"  << endl;
+	cubeSize +=1 ;
+	assets.pop_back();
+	j=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+
+
+
+	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,3,green));
+	assets.push_back(temp);
+
+	tempX = rand()%(theWidth/8)-theWidth/16;
+	tempY = rand()%(theHeight/8)-theHeight/16;
+
+	cout << tempX << endl;
+	cout << tempY << endl;
+	count++
       }
     }
   }
@@ -73,7 +105,7 @@ void display() {
 	pl ->draw();
 	//pl->update();
   }
-  
+
 
   // Don't forget to swap the buffers
   SDL_GL_SwapBuffers();
@@ -81,8 +113,8 @@ void display() {
 
 int main(int argc, char ** argv) {
 	SDL_Surface * surf;
-	Uint32 width = 640;
-	Uint32 height = 480;
+	Uint32 width = theWidth;
+	Uint32 height = theHeight;
 	Uint32 colour_depth = 16; // in bits
 	Uint32 delay = 1000/60; // in milliseconds
 
@@ -113,7 +145,7 @@ int main(int argc, char ** argv) {
     // initialise depth testing
 	glEnable (GL_DEPTH_TEST);
 
-
+	srand(time(0));
 /*
 for(int yay=0; yay<10; yay++){
 	for(int temp=0; temp<10; temp++){
@@ -124,23 +156,24 @@ for(int yay=0; yay<10; yay++){
 */
 
 /*
-shared_ptr<GameAsset> z = shared_ptr<GameAsset> (new TriangularPyramidAsset(0,0,5));
+shared_ptr<GameAsset> z = shared_ptr<GameAsset> (new TriangularPyramidAsset(246,229,50));
 assets.push_back(z); //code for triangle
 */
-int cubeX = -10;
-int cubeY =   0;
-int cubeZ =  50;
 
 
-shared_ptr<GameAsset> player1 = shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+
+
+shared_ptr<GameAsset> player1 = shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ, cubeSize, red));
 player.push_back(player1); //code for cubeA
 
-shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(10,0,50));
+
+shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(10,0,50,3, green));
 assets.push_back(cubeA); //code for cubeA
 
+/*
 shared_ptr<GameAsset> gun = shared_ptr<GameAsset> (new Gun(-7,0,40));
 assets.push_back(gun); //code for cubeA
-
+*/
 
 int camMode = 0;
 
@@ -165,6 +198,9 @@ int camMode = 0;
 			  Matrix4 camera = Camera::getInstance().getCameraM();
 // grrrr
 			  switch(event.key.keysym.sym){
+			  case SDLK_f:
+				 // player[0]->update();
+				  break;
 			  case SDLK_c:
 				  if(camMode==0){
 					  camMode=1;
@@ -174,8 +210,9 @@ int camMode = 0;
 				  break;
 			  case SDLK_LEFT:
 				  if(camMode==0){
-				  cubeX -= 10;
-				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+				  cubeX -= 5;
+				  //cubeSize += 1;
+				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
 				  }
 				  if(camMode==1){
 			    //Camera::getInstance().setCamera((camera * Matrix4::rotationY(5.0/180.0)));
@@ -185,8 +222,8 @@ int camMode = 0;
 			  case SDLK_RIGHT:
 
 				  if(camMode==0){
-				  cubeX += 10;
-				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+				  cubeX += 5;
+				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
 				  }
 				  /*
 				  for(auto pl2 : player){
@@ -203,20 +240,20 @@ int camMode = 0;
 			  case SDLK_UP:
 
 				  if(camMode==0){
-				  cubeY += 10;
-				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+				  cubeY += 5;
+				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
 				  } else {
 
-			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, -1.0, 0.0)) );
+			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 0.0, -2.0)) );
 
 				  }
 			    break;
 			  case SDLK_DOWN:
 				  if(camMode==0){
-				  cubeY -= 10;
-				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ));
+				  cubeY -= 5;
+				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
 				  } else {
-			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 1.0, 0.0)) );
+			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 0.0, 2.0)) );
 				  }
 			    break;
 			  default:

@@ -7,7 +7,7 @@
 class CubeAsset : public GameAsset {
  public:
   CubeAsset();
-  CubeAsset(float x, float y, float z);
+  CubeAsset(float x, float y, float z, float size, string shader);
   ~CubeAsset();
   //move(std::<shared_ptr> a, int b);
 

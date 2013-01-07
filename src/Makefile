@@ -64,8 +64,9 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_simplegame_OBJECTS = Main.$(OBJEXT) GameAsset.$(OBJEXT) \
 	Md2Asset.$(OBJEXT) TriangularPyramidAsset.$(OBJEXT) \
-	BallisticInterpolator.$(OBJEXT) Camera.$(OBJEXT) \
-	CubeAsset.$(OBJEXT) BoundingBox.$(OBJEXT)
+	BallisticInterpolator.$(OBJEXT) CubeAsset.$(OBJEXT) \
+	Camera.$(OBJEXT) BoundingBox.$(OBJEXT)\
+	Gun.$(OBJEXT)
 simplegame_OBJECTS = $(am_simplegame_OBJECTS)
 simplegame_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)

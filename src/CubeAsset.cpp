@@ -1,15 +1,15 @@
 #include "CubeAsset.h"
 
 CubeAsset::CubeAsset()
-  : GameAsset(
-	      string("shaders/hello-gl.v.glsl")
-	      , string("shaders/hello-gl.f.glsl")
-	      )
+
 {
-  CubeAsset(0, 0, 0);
+  CubeAsset(0, 0, 0, 0, "shaders/hello-gl.f.glsl");
 }
 
-CubeAsset::CubeAsset(float x, float y, float z) {
+CubeAsset::CubeAsset(float x, float y, float z, float size, string shader) : GameAsset(
+	      string("shaders/hello-gl.v.glsl")
+	      , string(shader)
+	      ){
   this->li = nullptr;
   this->pos = shared_ptr<Point3>(new Point3(x, y, z));
   // A default "unit" triangular pyramid
@@ -17,14 +17,14 @@ CubeAsset::CubeAsset(float x, float y, float z) {
   num_triangles = 12;
   g_vertex_buffer_data = new GLfloat[num_vertices * 3]{
 //	   X,  Y,  Z,
-	  -3, -3, -3, //0
-	   3, -3, -3, //1
-	   3,  3, -3, //2
-	  -3,  3, -3, //3
-	  -3, -3,  3, //4
-	   3, -3,  3, //5
-	   3,  3,  3, //6
-	  -3,  3,  3  //7
+	  -size, -size, -size, //0
+	   size, -size, -size, //1
+	   size,  size, -size, //2
+	  -size,  size, -size, //3
+	  -size, -size,  size, //4
+	   size, -size,  size, //5
+	   size,  size,  size, //6
+	  -size,  size,  size  //7
 
   }; // three points per vertex
   g_element_buffer_data = new GLushort[num_triangles * 3]{
@@ -47,7 +47,7 @@ CubeAsset::CubeAsset(float x, float y, float z) {
 
   mv_matrix = mv_matrix.translation( Vector3(x, y, z));
   bbox.reset();
-  bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), 1.0, 1.0, 1.0));
+  bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), size*2, size*2, size*2));
 
   make_resources();
 }
@@ -57,7 +57,7 @@ CubeAsset::~CubeAsset() {
 }
 
 void CubeAsset::update() {
-	//GameAsset::draw();
+	//mv_matrix = mv_matrix.translation(Vector3(0.1,0.1,0.0));
 }
 
 void CubeAsset::setInterpolator(shared_ptr<IInterpolator> li) {
