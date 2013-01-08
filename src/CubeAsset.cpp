@@ -17,14 +17,14 @@ CubeAsset::CubeAsset(float x, float y, float z, float size, string shader) : Gam
   num_triangles = 12;
   g_vertex_buffer_data = new GLfloat[num_vertices * 3]{
 //	   X,  Y,  Z,
-	  -size, -size, -size, //0
-	   size, -size, -size, //1
-	   size,  size, -size, //2
-	  -size,  size, -size, //3
-	  -size, -size,  size, //4
-	   size, -size,  size, //5
-	   size,  size,  size, //6
-	  -size,  size,  size  //7
+	  -size, -size, -3, //0
+	   size, -size, -3, //1
+	   size,  size, -3, //2
+	  -size,  size, -3, //3
+	  -size, -size,  3, //4
+	   size, -size,  3, //5
+	   size,  size,  3, //6
+	  -size,  size,  3  //7
 
   }; // three points per vertex
   g_element_buffer_data = new GLushort[num_triangles * 3]{
@@ -47,7 +47,7 @@ CubeAsset::CubeAsset(float x, float y, float z, float size, string shader) : Gam
 
   mv_matrix = mv_matrix.translation( Vector3(x, y, z));
   bbox.reset();
-  bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), size*2, size*2, size*2));
+  bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), size*2, size*2, 3*2));
 
   make_resources();
 }
@@ -57,7 +57,7 @@ CubeAsset::~CubeAsset() {
 }
 
 void CubeAsset::update() {
-	//mv_matrix = mv_matrix.translation(Vector3(0.1,0.1,0.0));
+	//this->pos=this->pos.translation(Vector3(0.0,1.0,0.0));
 }
 
 void CubeAsset::setInterpolator(shared_ptr<IInterpolator> li) {

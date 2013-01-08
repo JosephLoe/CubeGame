@@ -42,6 +42,9 @@ int count =0;
 
 string green = "shaders/green.f.glsl";
 string red = "shaders/red.f.glsl";
+string blue = "shaders/blue.f.glsl";
+
+int cubeShade = 0;
 
 /*
  * SDL timers run in separate threads.  In the timer thread
@@ -81,17 +84,30 @@ void display() {
 	assets.pop_back();
 	j=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
 
-
-
-	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,3,green));
+	if(count < 10){
+		if (cubeShade ==0){
+	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,rand()%3+1,green));
 	assets.push_back(temp);
+	cubeShade=1;
+		}else{
+	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,rand()%3+1,blue));
+	assets.push_back(temp);
+	cubeShade=0;
+		}
+
+	count++;
+
+	}
 
 	tempX = rand()%(theWidth/8)-theWidth/16;
 	tempY = rand()%(theHeight/8)-theHeight/16;
 
+	//cout << theWidth/16 <<endl; //finding stage size
+
 	cout << tempX << endl;
 	cout << tempY << endl;
-	count++
+
+
       }
     }
   }
@@ -164,7 +180,7 @@ assets.push_back(z); //code for triangle
 
 
 shared_ptr<GameAsset> player1 = shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ, cubeSize, red));
-player.push_back(player1); //code for cubeA
+player.push_back(player1); //code for player
 
 
 shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(10,0,50,3, green));
@@ -172,7 +188,7 @@ assets.push_back(cubeA); //code for cubeA
 
 /*
 shared_ptr<GameAsset> gun = shared_ptr<GameAsset> (new Gun(-7,0,40));
-assets.push_back(gun); //code for cubeA
+assets.push_back(gun); //code for gun
 */
 
 int camMode = 0;

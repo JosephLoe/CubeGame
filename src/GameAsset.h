@@ -30,6 +30,7 @@ public:
 
 	bool collidesWith(GameAsset & a);
 
+
 	virtual void draw();
 	virtual void update()=0;
 

@@ -11,6 +11,8 @@ class CubeAsset : public GameAsset {
   ~CubeAsset();
   //move(std::<shared_ptr> a, int b);
 
+  //virtual void move(float mx, float my, float mz);
+
   virtual void update();
   virtual void draw();
   void setInterpolator(shared_ptr<IInterpolator> li);
