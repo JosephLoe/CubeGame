@@ -57,7 +57,9 @@ CubeAsset::~CubeAsset() {
 }
 
 void CubeAsset::update() {
-	//this->pos=this->pos.translation(Vector3(0.0,1.0,0.0));
+	//this->pos = this->pos + this->vector;
+	//Vector3 vec2 = li->update();
+	//this->pos += vec2;
 }
 
 void CubeAsset::setInterpolator(shared_ptr<IInterpolator> li) {

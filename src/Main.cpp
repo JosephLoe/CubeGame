@@ -26,6 +26,7 @@ using namespace std;
 string filename = "data/ogre.md2";
 vector<shared_ptr<GameAsset> > assets;
 vector<shared_ptr<GameAsset> > player;
+vector<shared_ptr<GameAsset> > launch;
 int cubeSize = 3;
 
 int cubeX = -10;
@@ -75,6 +76,9 @@ void display() {
   for(auto plz : player) {
       plz->update();
     }
+  for(auto la : launch) {
+        la->update();
+      }
 
   for(auto i : assets) {
     for(auto j : player) {
@@ -121,6 +125,9 @@ void display() {
 	pl ->draw();
 	//pl->update();
   }
+  for(auto lau : launch){
+  	lau ->draw();
+    }
 
 
   // Don't forget to swap the buffers
@@ -186,10 +193,18 @@ player.push_back(player1); //code for player
 shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(10,0,50,3, green));
 assets.push_back(cubeA); //code for cubeA
 
+shared_ptr<CubeAsset> cubeB = shared_ptr<CubeAsset> (new CubeAsset(0,0,50,3, blue));
+launch.push_back(cubeB); //code for cubeA
+
 /*
 shared_ptr<GameAsset> gun = shared_ptr<GameAsset> (new Gun(-7,0,40));
 assets.push_back(gun); //code for gun
 */
+
+Vector3 launch(10.0f, 10.0f, 0.0f);
+shared_ptr<BallisticInterpolator> li = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(launch, 50));
+cubeB->setInterpolator(li);
+//cubeB->setInterpolator(li);
 
 int camMode = 0;
 
@@ -240,6 +255,7 @@ int camMode = 0;
 				  if(camMode==0){
 				  cubeX += 5;
 				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+
 				  }
 				  /*
 				  for(auto pl2 : player){
