@@ -65,7 +65,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_simplegame_OBJECTS = Main.$(OBJEXT) GameAsset.$(OBJEXT) \
 	Md2Asset.$(OBJEXT) TriangularPyramidAsset.$(OBJEXT) \
 	BallisticInterpolator.$(OBJEXT) Camera.$(OBJEXT) \
-	Camera.$(OBJEXT) BoundingBox.$(OBJEXT)
+	CubeAsset.$(OBJEXT) BoundingBox.$(OBJEXT) \
+	WallAsset.$(OBJEXT)
 simplegame_OBJECTS = $(am_simplegame_OBJECTS)
 simplegame_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)

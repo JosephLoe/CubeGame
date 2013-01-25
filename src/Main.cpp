@@ -15,8 +15,11 @@
 #include "TriangularPyramidAsset.h"
 #include "CubeAsset.h"
 #include "Gun.h"
+#include "WallAsset.h"
 
 #include "BallisticInterpolator.h"
+#include "MovementInterpolator.h"
+
 #include "Camera.h"
 
 using namespace std;
@@ -26,7 +29,11 @@ using namespace std;
 string filename = "data/ogre.md2";
 vector<shared_ptr<GameAsset> > assets;
 vector<shared_ptr<GameAsset> > player;
-vector<shared_ptr<GameAsset> > launch;
+
+vector<shared_ptr<CubeAsset> > launch;
+
+vector<shared_ptr<GameAsset> > walls;
+
 int cubeSize = 3;
 
 int cubeX = -10;
@@ -41,11 +48,29 @@ int theHeight = 480;
 
 int count =0;
 
+int camMode = 0;
+
 string green = "shaders/green.f.glsl";
 string red = "shaders/red.f.glsl";
 string blue = "shaders/blue.f.glsl";
+string white = "shaders/white.f.glsl";
+string grey = "shaders/grey.f.glsl";
+string yellow = "shaders/yellow.f.glsl";
 
 int cubeShade = 0;
+
+Vector3 noMove(0.0f, 0.0f, 0.0f);
+shared_ptr<BallisticInterpolator> still = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(noMove, 50));
+
+Vector3 vShootRight(10.0f, 10.0f, 0.0f);
+shared_ptr<BallisticInterpolator> shoot = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(vShootRight, 50));
+Vector3 vShootLeft(-10.0f, 10.0f, 0.0f);
+Vector3 vShootUp(0.0f, 20.0f, 0.0f);
+
+
+shared_ptr<CubeAsset> cubeA;// = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, blue));
+shared_ptr<CubeAsset> cubeB;// = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, blue));
+shared_ptr<CubeAsset> cubeC;// = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, blue));
 
 /*
  * SDL timers run in separate threads.  In the timer thread
@@ -73,29 +98,62 @@ void display() {
   for(auto it : assets) {
     it->update();
   }
+
   for(auto plz : player) {
       plz->update();
     }
   for(auto la : launch) {
         la->update();
       }
+  for(auto wa : walls) {
+          wa->update();
+        }
 
-  for(auto i : assets) {
+  for(auto i: player){
+	  for(auto j: walls){
+		  if(i->collidesWith(*j)) {
+			  cout << "Player>wall collision" << endl;
+			  if(cubeX<0){
+			  i = shared_ptr<GameAsset>(new CubeAsset(cubeX+5,cubeY,cubeZ,cubeSize,red));
+			  }
+		  }
+	  }
+  }
+
+  for(auto i : player) {
     for(auto j : player) {
       if((i != j) && i->collidesWith(*j)) {
-	cout << "We have a collision"  << endl;
-	cubeSize +=1 ;
-	assets.pop_back();
-	j=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+	cout << "Asset colliding"  << endl;
+	//cubeSize +=0.5 ;
+	if(player.size()>1){
+	player.pop_back();
+	}
+	//j=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+
+	shared_ptr<CubeAsset> cubeA = shared_ptr<CubeAsset> (new CubeAsset(cubeX+3,cubeY,cubeZ,1, yellow));
+	shoot = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(vShootRight, 30));
+	cubeA->setInterpolator(shoot);
+
+	shared_ptr<CubeAsset> cubeB = shared_ptr<CubeAsset> (new CubeAsset(cubeX+3,cubeY,cubeZ,1, yellow));
+	shoot = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(vShootLeft, 30));
+	cubeB->setInterpolator(shoot);
+
+	shared_ptr<CubeAsset> cubeC = shared_ptr<CubeAsset> (new CubeAsset(cubeX+3,cubeY,cubeZ,1, yellow));
+	shoot = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(vShootUp, 30));
+	cubeC->setInterpolator(shoot);
+
+	launch.push_back(cubeA);
+	launch.push_back(cubeB);
+	launch.push_back(cubeC); //code for cubeC
 
 	if(count < 10){
 		if (cubeShade ==0){
 	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,rand()%3+1,green));
-	assets.push_back(temp);
+	player.push_back(temp);
 	cubeShade=1;
-		}else{
+		}else if(cubeShade==1){
 	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,rand()%3+1,blue));
-	assets.push_back(temp);
+	player.push_back(temp);
 	cubeShade=0;
 		}
 
@@ -103,18 +161,40 @@ void display() {
 
 	}
 
-	tempX = rand()%(theWidth/8)-theWidth/16;
-	tempY = rand()%(theHeight/8)-theHeight/16;
+	cout<<"Your score;"<<endl;
+	cout<<count<<endl;
+
+	if (count>=10){
+		cout<<"You Win!"<<endl;
+		exit(1);
+	}
+
+	tempX = rand()%(theWidth/12)-theWidth/20;
+	tempY = rand()%(theHeight/12)-theHeight/20;
 
 	//cout << theWidth/16 <<endl; //finding stage size
 
-	cout << tempX << endl;
-	cout << tempY << endl;
+	//cout << tempX << endl;
+	//cout << tempY << endl;
+
 
 
       }
     }
   }
+
+/*
+  for(auto i : launch) {
+      for(auto j : walls) {
+        if((i != j) && i->collidesWith(*j)) { //whys this not working?
+        	cout << "They're colliding, ok?"  << endl;
+        	//i->setInterpolator(still);
+        } else {
+        	i->setInterpolator(still);
+        }
+      }
+  }
+  */
 
   for(auto it : assets) {
 	//  glColorMask(1.0f,0.0f,0.0f,1.0f); // CHANGE COLOR OF BOX!
@@ -128,6 +208,9 @@ void display() {
   for(auto lau : launch){
   	lau ->draw();
     }
+  for(auto wal : walls){
+    	wal ->draw();
+      }
 
 
   // Don't forget to swap the buffers
@@ -140,6 +223,8 @@ int main(int argc, char ** argv) {
 	Uint32 height = theHeight;
 	Uint32 colour_depth = 16; // in bits
 	Uint32 delay = 1000/60; // in milliseconds
+
+	cout<<"Hit the Target 10 times to win, Goodluck!"<<endl;
 
 	// Initialise SDL - when using C/C++ it's common to have to
 	// initialise libraries by calling a function within them.
@@ -189,24 +274,56 @@ assets.push_back(z); //code for triangle
 shared_ptr<GameAsset> player1 = shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ, cubeSize, red));
 player.push_back(player1); //code for player
 
+//store in a single vector
 
-shared_ptr<GameAsset> cubeA = shared_ptr<GameAsset> (new CubeAsset(10,0,50,3, green));
-assets.push_back(cubeA); //code for cubeA
+shared_ptr<GameAsset> target = shared_ptr<GameAsset> (new CubeAsset(10,0,50,3, green));
+player.push_back(target); //code for target
 
-shared_ptr<CubeAsset> cubeB = shared_ptr<CubeAsset> (new CubeAsset(0,0,50,3, blue));
-launch.push_back(cubeB); //code for cubeA
 
+//shared_ptr<CubeAsset> cubeB = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, blue));
+/*
+launch.push_back(cubeB); //code for cubeB
+*/
+shared_ptr<CubeAsset> cubeA = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, red));
+shared_ptr<CubeAsset> cubeB = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, red));
+shared_ptr<CubeAsset> cubeC = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, red));
+
+
+shared_ptr<GameAsset> wallR = shared_ptr<GameAsset> (new WallAsset(0,0,50, 30, 25,20,"LR",white));
+walls.push_back(wallR); //code for walls
+shared_ptr<GameAsset> wallL = shared_ptr<GameAsset> (new WallAsset(0,0,50,-30, 25,20,"LR",white));
+walls.push_back(wallL); //code for walls
+shared_ptr<GameAsset> wallT = shared_ptr<GameAsset> (new WallAsset(0,0,50, 30, 25,20,"TB",grey));
+walls.push_back(wallT); //code for walls
+shared_ptr<GameAsset> wallB = shared_ptr<GameAsset> (new WallAsset(0,0,50, 30,-25,20,"TB",grey));
+walls.push_back(wallB); //code for walls
 /*
 shared_ptr<GameAsset> gun = shared_ptr<GameAsset> (new Gun(-7,0,40));
 assets.push_back(gun); //code for gun
 */
 
-Vector3 launch(10.0f, 10.0f, 0.0f);
-shared_ptr<BallisticInterpolator> li = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(launch, 50));
-cubeB->setInterpolator(li);
+Vector3 lRight(1.0f, 0.0f, 0.0f);
+shared_ptr<BallisticInterpolator> right = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(lRight, 50));
+
+Vector3 lLeft(-1.0f, 0.0f, 0.0f);
+shared_ptr<BallisticInterpolator> left = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(lLeft, 50));
+
+Vector3 lUp(0.0f, 1.0f, 0.0f);
+shared_ptr<BallisticInterpolator> up = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(lUp, 50));
+
+Vector3 lDown(0.0f, -1.0f, 0.0f);
+shared_ptr<BallisticInterpolator> down = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(lDown, 50));
+
+Vector3 moveTest(10.0f,0.0f,0.0f);
+shared_ptr<MovementInterpolator> mvTest = shared_ptr<MovementInterpolator>( new MovementInterpolator(moveTest));
+
+
+
+
+
+//cubeB->setInterpolator(li);
 //cubeB->setInterpolator(li);
 
-int camMode = 0;
 
 	// Call the function "display" every delay milliseconds
 	SDL_AddTimer(delay, display, NULL);
@@ -223,27 +340,32 @@ int camMode = 0;
 				break;
 			case SDL_KEYUP:
 			  Camera::getInstance().setCamera(Matrix4::identity());
-
+			  //cubeB->setInterpolator(still);
 			  break;
 			case SDL_KEYDOWN:
 			  Matrix4 camera = Camera::getInstance().getCameraM();
 // grrrr
 			  switch(event.key.keysym.sym){
-			  case SDLK_f:
-				 // player[0]->update();
-				  break;
+			  /*case SDLK_f:
+				  cubeC = shared_ptr<CubeAsset> (new CubeAsset(cubeX+3,cubeY,cubeZ,1, blue));
+				  shoot = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(vShootRight, 50));
+				  cubeC->setInterpolator(shoot);
+				  launch.push_back(cubeC); //code for cubeB
+				  break;*/
 			  case SDLK_c:
 				  if(camMode==0){
 					  camMode=1;
 				  } else {
 					  camMode=0;
+					  Camera::getInstance().setCamera(Matrix4::identity()); //reset camera pos?
+					  //display();
 				  }
 				  break;
 			  case SDLK_LEFT:
 				  if(camMode==0){
-				  cubeX -= 5;
-				  //cubeSize += 1;
-				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+					  cubeX -= 5;
+					  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+					  //cubeB->setInterpolator(left);
 				  }
 				  if(camMode==1){
 			    //Camera::getInstance().setCamera((camera * Matrix4::rotationY(5.0/180.0)));
@@ -255,7 +377,8 @@ int camMode = 0;
 				  if(camMode==0){
 				  cubeX += 5;
 				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
-
+				  //player1->setInterpolator(mvTest);
+				  //cubeB->setInterpolator(right);
 				  }
 				  /*
 				  for(auto pl2 : player){
@@ -263,7 +386,6 @@ int camMode = 0;
 				  	pl2->update();
 				    }
 				    */
-
 				  //TODO try and get the camera to rotate and move at same time!
 				  if(camMode==1){
 				  Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(-1.0, 0.0, 0.0)) );
@@ -274,6 +396,7 @@ int camMode = 0;
 				  if(camMode==0){
 				  cubeY += 5;
 				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+				  //cubeB->setInterpolator(up);
 				  } else {
 
 			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 0.0, -2.0)) );
@@ -284,6 +407,7 @@ int camMode = 0;
 				  if(camMode==0){
 				  cubeY -= 5;
 				  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
+				  //cubeB->setInterpolator(down);
 				  } else {
 			    Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(0.0, 0.0, 2.0)) );
 				  }

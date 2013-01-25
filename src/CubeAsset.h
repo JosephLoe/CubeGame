@@ -19,6 +19,7 @@ class CubeAsset : public GameAsset {
  private:
   shared_ptr<IInterpolator> li;
   shared_ptr<Point3>        pos;
+  shared_ptr<Vector3>		vecPos;
 };
 
 #endif // CubeASSET_H_
