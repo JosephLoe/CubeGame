@@ -12,7 +12,7 @@ CubeAsset::CubeAsset(float x, float y, float z, float size, string shader) : Gam
 	      ){
   this->li = nullptr;
   this->pos = shared_ptr<Point3>(new Point3(x, y, z));
-  // A default "unit" triangular pyramid
+
   num_vertices = 8;
   num_triangles = 12;
   g_vertex_buffer_data = new GLfloat[num_vertices * 3]{
@@ -56,20 +56,9 @@ CubeAsset::~CubeAsset() {
   // TODO: do something nice here.
 }
 
-//moveLeft
-
 void CubeAsset::update() {
-	//this->pos = this->pos + this->vector;
-	//Vector3 vec2 = li->update();
-	//this->pos += vec2;
-	//shared_ptr<Point3>cubePos=shared_ptr<Point3>(new Point3(this->pos));
-	//Vector3 vecPos(this->pos);
-//	mv_matrix = Matrix4::identity();
-	////////////////////////////////////////////////this->vecPos(this->pos);
-	//cast point3 to vector3 then to matrix 4
-	//new vector3(point3)
+
 	Vector3 * vecPos = new Vector3(*pos);
-	//Vector3 * vPos = new Vector3(*pos);
 
 	if(nullptr!=li){
 		Vector3 vec = li->update();
@@ -89,11 +78,3 @@ void CubeAsset::setInterpolator(shared_ptr<IInterpolator> li) {
 void CubeAsset::draw() {
   GameAsset::draw();
 }
-
-/*
-CubeAsset::move(<shared_ptr> a, int b){
-CubeAsset(0.0,1.0,0.0)
-
-}
-*/
-

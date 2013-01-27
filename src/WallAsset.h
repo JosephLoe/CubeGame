@@ -9,9 +9,6 @@ class WallAsset : public GameAsset {
   WallAsset();
   WallAsset(float x, float y, float z, float wallX, float wallY, float wallZ, string(side),string(shader));
   ~WallAsset();
-  //move(std::<shared_ptr> a, int b);
-
-  //virtual void move(float mx, float my, float mz);
 
   virtual void update();
   virtual void draw();

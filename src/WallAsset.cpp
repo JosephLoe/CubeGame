@@ -54,8 +54,6 @@ WallAsset::WallAsset(float x, float y, float z, float wallX, float wallY, float 
   }
 
   mv_matrix = mv_matrix.translation( Vector3(x, y, z));
-  //bbox.reset();
-  //bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), wallX, wallY, wallZ));
 
   make_resources();
 }
@@ -65,15 +63,6 @@ WallAsset::~WallAsset() {
 }
 
 void WallAsset::update() {
-	//this->pos = this->pos + this->vector;
-	//Vector3 vec2 = li->update();
-	//this->pos += vec2;
-
-	/*if(nullptr!=li){
-		Vector3 vec = li->update();
-		mv_matrix *= mv_matrix.translation(vec);
-
-	}*/
 
 }
 
@@ -84,11 +73,4 @@ void WallAsset::setInterpolator(shared_ptr<IInterpolator> li) {
 void WallAsset::draw() {
   GameAsset::draw();
 }
-
-/*
-WallAsset::move(<shared_ptr> a, int b){
-WallAsset(0.0,1.0,0.0)
-
-}
-*/
 

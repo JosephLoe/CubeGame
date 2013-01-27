@@ -63,10 +63,9 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_simplegame_OBJECTS = Main.$(OBJEXT) GameAsset.$(OBJEXT) \
-	Md2Asset.$(OBJEXT) TriangularPyramidAsset.$(OBJEXT) \
+	Md2Asset.$(OBJEXT) WallAsset.$(OBJEXT) \
 	BallisticInterpolator.$(OBJEXT) Camera.$(OBJEXT) \
-	CubeAsset.$(OBJEXT) BoundingBox.$(OBJEXT) \
-	WallAsset.$(OBJEXT)
+	CubeAsset.$(OBJEXT) BoundingBox.$(OBJEXT) 	
 simplegame_OBJECTS = $(am_simplegame_OBJECTS)
 simplegame_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
