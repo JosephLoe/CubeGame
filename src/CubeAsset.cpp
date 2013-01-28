@@ -58,14 +58,14 @@ CubeAsset::~CubeAsset() {
 
 void CubeAsset::update() {
 
-	Vector3 * vecPos = new Vector3(*pos);
+	Vector3 * vecPos = new Vector3(*pos); // get the current position of the cube and store in a vector3, from  a point3
 
 	if(nullptr!=li){
 		Vector3 vec = li->update();
-		vec.setX(vec.getX()+vecPos->getX());
+		vec.setX(vec.getX()+vecPos->getX()); // horrible way of adding two vector3's together
 		vec.setY(vec.getY()+vecPos->getY());
 		vec.setZ(vec.getZ()+vecPos->getZ());
-		mv_matrix = mv_matrix.translation(vec);
+		mv_matrix = mv_matrix.translation(vec); //translate the new vector3 to the mv_matrix
 
 	}
 

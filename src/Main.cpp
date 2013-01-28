@@ -95,13 +95,11 @@ void display() {
 
   for(auto i : player) {
     for(auto j : player) {
-      if((i != j) && i->collidesWith(*j)) {
-	cout << "Asset colliding"  << endl;
-	//cubeSize +=0.5 ;
+      if((i != j) && i->collidesWith(*j)) {  //if a player is colliding with another player vector: create 3 ballistics in the position of the collision, and fire left, right and up. then delete the target player, and create a new target in a new random location.
+	cout << "Target hit"  << endl;
 	if(player.size()>1){
 	player.pop_back();
 	}
-	//j=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
 
 	shared_ptr<CubeAsset> cubeA = shared_ptr<CubeAsset> (new CubeAsset(cubeX+3,cubeY,cubeZ,1, yellow));
 	shoot = shared_ptr<BallisticInterpolator>( new BallisticInterpolator(vShootRight, 30));
@@ -120,7 +118,7 @@ void display() {
 	launch.push_back(cubeC); //code for cubeC
 
 	if(count < 10){
-		if (cubeShade ==0){
+		if (cubeShade ==0){ // to create a new cube, in a new colour: on each collision change the colour of the target player
 	shared_ptr<GameAsset> temp = shared_ptr<GameAsset> (new CubeAsset(tempX,tempY,50,rand()%3+1,green));
 	player.push_back(temp);
 	cubeShade=1;
@@ -137,7 +135,7 @@ void display() {
 	cout<<"Your score;"<<endl;
 	cout<<count<<endl;
 
-	if (count>=10){
+	if (count>=10){ // if count becomes 10. i.e there has been 10 collisions, gameover.
 		cout<<"You Win!"<<endl;
 		exit(1);
 	}
@@ -212,14 +210,15 @@ shared_ptr<CubeAsset> cubeB = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,c
 shared_ptr<CubeAsset> cubeC = shared_ptr<CubeAsset> (new CubeAsset(cubeX,cubeY,cubeZ,1, red));
 
 
+//create the walls for the game
 shared_ptr<GameAsset> wallR = shared_ptr<GameAsset> (new WallAsset(0,0,50, 30, 25,20,"LR",white));
-walls.push_back(wallR); //code for walls
+walls.push_back(wallR); //code for left walls
 shared_ptr<GameAsset> wallL = shared_ptr<GameAsset> (new WallAsset(0,0,50,-30, 25,20,"LR",white));
-walls.push_back(wallL); //code for walls
+walls.push_back(wallL); //code for right walls
 shared_ptr<GameAsset> wallT = shared_ptr<GameAsset> (new WallAsset(0,0,50, 30, 25,20,"TB",grey));
-walls.push_back(wallT); //code for walls
+walls.push_back(wallT); //code for top walls
 shared_ptr<GameAsset> wallB = shared_ptr<GameAsset> (new WallAsset(0,0,50, 30,-25,20,"TB",grey));
-walls.push_back(wallB); //code for walls
+walls.push_back(wallB); //code for bottom walls
 
 	// Call the function "display" every delay milliseconds
 	SDL_AddTimer(delay, display, NULL);
@@ -240,7 +239,7 @@ walls.push_back(wallB); //code for walls
 			case SDL_KEYDOWN:
 			  Matrix4 camera = Camera::getInstance().getCameraM();
 			  switch(event.key.keysym.sym){
-			  case SDLK_c:
+			  case SDLK_c: // on key press "c" switch between being able to move the camera, or move the cubes. like a spectator mode. particularly usefull in development
 				  if(camMode==0){
 					  camMode=1;
 				  } else {
@@ -248,7 +247,7 @@ walls.push_back(wallB); //code for walls
 					  Camera::getInstance().setCamera(Matrix4::identity()); //reset camera pos?
 				  }
 				  break;
-			  case SDLK_LEFT:
+			  case SDLK_LEFT: // now on arrow key presses, depending on the camera mode being on or off, either move the cube(player) or the camera
 				  if(camMode==0){
 					  cubeX -= 5;
 					  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
@@ -257,8 +256,7 @@ walls.push_back(wallB); //code for walls
 					  Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(1.0, 0.0, 0.0)) );
 				  }
 				  break;
-			  case SDLK_RIGHT:
-
+			  case SDLK_RIGHT:// now on arrow key presses, depending on the camera mode being on or off, either move the cube(player) or the camera
 				  if(camMode==0){
 					  cubeX += 5;
 					  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
@@ -268,8 +266,7 @@ walls.push_back(wallB); //code for walls
 					  Camera::getInstance().setCamera(camera * Matrix4::translation(Vector3(-1.0, 0.0, 0.0)) );
 				  }
 				  break;
-			  case SDLK_UP:
-
+			  case SDLK_UP:// now on arrow key presses, depending on the camera mode being on or off, either move the cube(player) or the camera
 				  if(camMode==0){
 					  cubeY += 5;
 					  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));
@@ -279,7 +276,7 @@ walls.push_back(wallB); //code for walls
 
 				  }
 				  break;
-			  case SDLK_DOWN:
+			  case SDLK_DOWN:// now on arrow key presses, depending on the camera mode being on or off, either move the cube(player) or the camera
 				  if(camMode==0){
 					  cubeY -= 5;
 					  player[0]=shared_ptr<GameAsset> (new CubeAsset(cubeX,cubeY,cubeZ,cubeSize,red));

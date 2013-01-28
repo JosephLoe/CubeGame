@@ -15,7 +15,7 @@ WallAsset::WallAsset(float x, float y, float z, float wallX, float wallY, float 
   // A default "unit" triangular pyramid
   num_vertices = 4;
   num_triangles = 2;
-  if(side=="LR"){
+  if(side=="LR"){ // from the string that's input, if it is equal "LR" (standing for Left-Right walls) create the left or right wall depending on the float inputs.
   g_vertex_buffer_data = new GLfloat[num_vertices * 3]{
 //	   X,  Y,  Z,
 	   wallX, -wallY, -wallZ, //0
@@ -32,7 +32,7 @@ WallAsset::WallAsset(float x, float y, float z, float wallX, float wallY, float 
   }; // three vertices per triangle
   bbox.reset();
   bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), 1, wallY, wallZ));
-  }else if(side=="TB"){
+  }else if(side=="TB"){ // from the string that's input, if it is equal "TB" (standing for Top-Bottom walls) create the Top OR Bottom wall depending on the float inputs.
 	  g_vertex_buffer_data = new GLfloat[num_vertices * 3]{
 	  //	   X,  Y,  Z,
 	  	  -wallX,  wallY, -wallZ, //0
@@ -49,7 +49,7 @@ WallAsset::WallAsset(float x, float y, float z, float wallX, float wallY, float 
 	    }; // three vertices per triangle
 	    bbox.reset();
 	    bbox = shared_ptr<BoundingBox>(new BoundingBox(Point3(x, y, z), wallX, 1, wallZ));
-  } else{
+  } else{ // else if the string is invalid cerr:
 	  cerr<< "Invalid string passed into WallAsset, Must be LR or TB" << endl;
   }
 
