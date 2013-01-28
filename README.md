@@ -44,3 +44,6 @@ Fix bugs.
 Increase difficulty:
 	The falling debris from the enemy explosion will cause damage, avoid it at all costs. 
 	The enemy fires in all directions.
+
+--For consideration--
+There is supplied CubeGame-Master-Orig.zip which has development comments and classes that were unfinished in implementation, but may provide for feedback on our thought processes for future development.
